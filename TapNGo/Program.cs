@@ -110,8 +110,11 @@ builder.Services.AddCors(options =>
     });
 });
 
+
+var dbPath = Path.Combine(AppContext.BaseDirectory, "Data", "tapngo.db");
+
 builder.Services.AddDbContext<TapNgoV1Context>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("SqlLite")));
+    options.UseSqlite($"Data Source={dbPath}"));
 
 // Add EF Core DbContext
 //builder.Services.AddDbContext<TapNgoV1Context>();

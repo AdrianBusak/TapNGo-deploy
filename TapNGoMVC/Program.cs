@@ -41,8 +41,10 @@ builder.Services.AddAutoMapper(typeof(Program));
 //builder.Services.AddDbContext<TapNgoV1Context>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
+var dbPath = Path.Combine(AppContext.BaseDirectory, "Data", "tapngo.db");
+
 builder.Services.AddDbContext<TapNgoV1Context>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("SqlLite")));
+    options.UseSqlite($"Data Source={dbPath}"));
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
