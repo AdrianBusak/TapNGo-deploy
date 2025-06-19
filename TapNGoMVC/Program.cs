@@ -38,8 +38,11 @@ builder.Services.AddControllers()
 
 builder.Services.AddAutoMapper(typeof(Program));
 
+//builder.Services.AddDbContext<TapNgoV1Context>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
 builder.Services.AddDbContext<TapNgoV1Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("SqlLite")));
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();

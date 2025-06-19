@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -109,8 +110,11 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddDbContext<TapNgoV1Context>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("SqlLite")));
+
 // Add EF Core DbContext
-builder.Services.AddDbContext<TapNgoV1Context>();
+//builder.Services.AddDbContext<TapNgoV1Context>();
 
 var app = builder.Build();
 
