@@ -1,6 +1,6 @@
 ﻿$(function () {
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("http://localhost:5235/orderHub")
+        .withUrl("https://tapngo-api-hmhtczg8dyfraxf7.germanywestcentral-01.azurewebsites.net/orderHub")
         .withAutomaticReconnect()
         .build();
 

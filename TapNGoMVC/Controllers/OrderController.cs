@@ -65,7 +65,7 @@ namespace TapNGoMVC.Controllers
                 return RedirectToAction("Index", "Menu");
             }
             _hubConnection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:5235/orderHub")
+                .WithUrl("https://tapngo-api-hmhtczg8dyfraxf7.germanywestcentral-01.azurewebsites.net/orderHub")
                 .WithAutomaticReconnect()
                 .Build();
             _hubConnection.StartAsync().GetAwaiter().GetResult();

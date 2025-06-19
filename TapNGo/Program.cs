@@ -103,7 +103,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .WithOrigins("http://localhost:5051")
+            .WithOrigins("https://tapngo-aze4afcsa3agfabc.germanywestcentral-01.azurewebsites.net")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();

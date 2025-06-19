@@ -1,6 +1,6 @@
 ﻿function startWaiterConnection() {
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("http://localhost:5235/waiterHub")
+        .withUrl("https://tapngo-api-hmhtczg8dyfraxf7.germanywestcentral-01.azurewebsites.net/waiterHub")
         .withAutomaticReconnect()
         .build();
 

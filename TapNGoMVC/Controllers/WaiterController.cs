@@ -22,7 +22,7 @@ namespace TapNGoMVC.Controllers
             }
 
             _hubConnection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:5235/waiterHub")
+                .WithUrl("https://tapngo-api-hmhtczg8dyfraxf7.germanywestcentral-01.azurewebsites.net/waiterHub")
                 .WithAutomaticReconnect()
                 .Build();
             _hubConnection.StartAsync().GetAwaiter().GetResult();
