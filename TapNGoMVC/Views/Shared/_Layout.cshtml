@@ -1,0 +1,241 @@
+﻿@using System.Security.Claims
+@{
+    var userName = ViewContext.HttpContext.User?.Identity?.Name;
+    var isLoggedIn = ViewContext.HttpContext.User?.Identity?.IsAuthenticated ?? false;
+    var firstName = ViewContext.HttpContext.User?.FindFirst("FirstName")?.Value;
+    var lastName = ViewContext.HttpContext.User?.FindFirst("LastName")?.Value;
+    var role = ViewContext.HttpContext.User?.FindFirst(ClaimTypes.Role)?.Value;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TapNGoMVC</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/TapNGoMVC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/review.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="fixed-header">
+        <nav class="navbar text-light shadow-sm border-bottom box-shadow" style="background-color: #001f3f;">
+            <div class="container-fluid">
+                <div class="row w-100 align-items-center g-2">
+
+                    <div class="col-auto">
+                        <button class="btn btn-outline-light flex-shrink-0" type="button">Jezik</button>
+                    </div>
+
+                    <div class="col">
+                        <form method="get" asp-controller="Menu" asp-action="Index">
+                            <input type="hidden" name="categoryId" value="@ViewBag.CategoryId" />
+                            <div class="input-group input-group-sm">
+                                <input type="text" name="searchTerm" class="form-control" placeholder="Search..." value="@(ViewBag.SearchTerm )" />
+                                <button class="btn btn-outline-light" type="submit">🔍</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-auto">
+                        <div class="d-flex align-items-center gap-2">
+                            <form asp-controller="Order" asp-action="Index" method="post">
+                                <button class="btn btn-outline-light flex-shrink-0" aria-label="Košarica">🛒</button>
+                            </form>
+
+                            @if (!isLoggedIn)
+                            {
+                                <a class="btn btn-outline-light flex-shrink-0" asp-controller="User" asp-action="Login">Login</a>
+                            }
+                            else
+                            {
+                                <span class="badge bg-light text-dark text-nowrap">@firstName @lastName (@role)</span>
+                                <a class="btn btn-outline-light flex-shrink-0" asp-controller="User" asp-action="Logout">Logout</a>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main">
+        @RenderBody()
+
+        @if (TempData["Message"] != null)
+        {
+            <div id="messageAlert" class="fixed-top" style="top: 70px; z-index: 1050;">
+                <div class="container mt-2">
+                    <div class="alert alert-success alert-dismissible fade show shadow" role="alert">
+                        @TempData["Message"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div id="errorAlert" class="fixed-top" style="top: 70px; z-index: 1050;">
+                <div class="container mt-2">
+                    <div class="alert alert-danger alert-dismissible fade show shadow" role="alert">
+                        @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (TempData["CalledWaiter"] != null)
+        {
+            <div id="calledWaiterAlert" class="fixed-top" style="top: 70px; z-index: 1050;">
+                <div class="container mt-2">
+                    <div class="alert alert-success alert-dismissible fade show shadow" role="alert">
+                        @TempData["CalledWaiter"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div style="position: fixed; bottom: 140px; right: 20px; z-index: 10;">
+            <button type="button" class="waiterBtn btn btn-outline-warning rounded-circle fw-bold text-dark d-flex align-items-center justify-content-center"
+                    data-bs-toggle="modal" data-bs-target="#waiterModal"
+                    style="width: 80px; height: 80px;">
+                Konobar
+            </button>
+        </div>
+    </main>
+
+    <div class="modal fade" id="waiterModal" tabindex="-1" aria-labelledby="waiterModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="waiterModalLabel">Pozivanje konobara</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="note">NAPOMENA:</label>
+                    <textarea id="note" class="form-control" rows="4"></textarea>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ODUSTANI</button>
+                    <button type="button" class="btn btn-primary" id="confirmWaiterBtn">POTVRDI</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reviewModalLabel">RECENZIJA</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="reviewComment" class="form-label">Komentar:</label>
+                    <textarea id="reviewComment" class="form-control mb-3" rows="3" placeholder="Komentar..."></textarea>
+
+                    <div class="star-rating text-center mb-3">
+                        <span class="star" data-value="1">&#9734;</span>
+                        <span class="star" data-value="2">&#9734;</span>
+                        <span class="star" data-value="3">&#9734;</span>
+                        <span class="star" data-value="4">&#9734;</span>
+                        <span class="star" data-value="5">&#9734;</span>
+                    </div>
+
+                    <input type="hidden" id="rating" value="0" />
+                    <input type="hidden" id="orderId" value="@TempData["NewOrderId"]" />
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ODUSTANI</button>
+                    <button type="button" class="btn btn-primary" id="confirmReviewBtn">POTVRDI</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @{
+        var customCategories = new List<(int Id, string Name)>
+    {
+    (1, "Gazirana"),
+    (2, "Alkoholna"),
+    (3, "Kokteli"),
+    (4, "Sokovi")
+    };
+    }
+
+    <footer class="border-top text-light footer text-muted px-1 py-2 fixed-footer" style="background-color: #001f3f;">
+        <div class="container-fluid d-flex justify-content-between w-100 flex-wrap">
+            @foreach (var category in customCategories)
+            {
+                <a class="btn btn-outline-light text-center px-3 my-1"
+                   asp-controller="Menu"
+                   asp-action="Index"
+                   asp-route-categoryId="@category.Id">
+                    @category.Name
+                </a>
+            }
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+                $(document).ready(function () {
+            let waiterButtonRef = null;
+
+            $('.waiterBtn').click(function () {
+                waiterButtonRef = $(this);
+            });
+
+            $('#confirmWaiterBtn').click(function () {
+                if (!waiterButtonRef) return;
+
+                const note = $('#note').val();
+
+                $.ajax({
+                    url: '@Url.Action("CallWaiter", "Waiter")',
+                    type: 'POST',
+                    data: { note: note },
+                    success: function () {
+                        $('#waiterModal').modal('hide');
+
+                        waiterButtonRef.prop('disabled', true);
+                        waiterButtonRef.text('Konobar dolazi');
+
+                        setTimeout(function () {
+                            waiterButtonRef.prop('disabled', false);
+                            waiterButtonRef.text('Pozovi konobara');
+                        }, 60000);
+                    },
+                    error: function () {
+                        alert("Greška pri pozivanju konobara.");
+                    }
+                });
+            });
+
+            // Review modal
+            const showReview = '@TempData["ShowReviewModal"]' === 'True';
+            if (showReview) {
+                const modalElement = document.getElementById('reviewModal');
+                if (modalElement) {
+                    const reviewModal = new bootstrap.Modal(modalElement);
+                    reviewModal.show();
+                }
+            }
+        });
+
+    </script>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/js/clinetLayout.js"></script>
+    <script src="~/js/review.js" asp-append-version="true" defer></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
