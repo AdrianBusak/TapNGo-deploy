@@ -79,8 +79,27 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/" && context.User.Identity?.IsAuthenticated == true)
+    {
+        if (context.User.IsInRole("Admin"))
+        {
+            context.Response.Redirect("/AdminOrder/Index");
+            return;
+        }
+        else
+        {
+            context.Response.Redirect("/Category/Index");
+            return;
+        }
+    }
+
+    await next();
+});
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Category}/{action=Index}/{id?}");
-
 app.Run();
